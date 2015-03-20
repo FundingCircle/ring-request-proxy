@@ -11,23 +11,25 @@
 (defn- handle-not-found [request]
   not-found-response)
 
-(defn- proxy-request-by-server* [handler server-to-host request]
-  (let [domain (:server-name request)
-        host (get server-to-host domain)]
-    (if host
-      (select-keys (client/request {:url (build-url host (:uri request))
-                                    :method (:request-method request)
-                                    :body (:body request)
-                                    :headers (:headers request)
-                                    :query-params (:query-params request)
-                                    :throw-exceptions false
-                                    :as :stream})
-                   [:status :body])
-      (handler request))))
+(defn- create-proxy-fn [handler opts]
+  (let [identifier-fn (get opts :identifier-fn identity)
+        server-mapping (get opts :host-fn {})]
+    (fn [request]
+      (let [request-key (identifier-fn request)
+            host (server-mapping request-key)]
+        (if host
+          (select-keys (client/request {:url (build-url host (:uri request))
+                                        :method (:request-method request)
+                                        :body (:body request)
+                                        :headers (:headers request)
+                                        :query-params (:query-params request)
+                                        :throw-exceptions false
+                                        :as :stream})
+                       [:status :body])
+          (handler request))))))
 
-(defn proxy-request-by-server
-  ([server-to-host]
-   (proxy-request-by-server handle-not-found server-to-host))
-  ([handler server-to-host]
-   (partial proxy-request-by-server* handler server-to-host)))
-
+(defn proxy-request
+  ([opts]
+   (proxy-request handle-not-found opts))
+  ([handler opts]
+   (create-proxy-fn handler opts)))
