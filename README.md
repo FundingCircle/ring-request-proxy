@@ -8,27 +8,30 @@ TBD
 
 ## Usage
 
-### Request Proxy
-
 ```clojure
 (ns myapp.core
   (:require [ring-request-proxy.core :as proxy])
 
 ; Middleware format: Delegates request to handler when request can't be forwarded
 (def app (-> not-found-handler
-             (proxy/proxy-request-by-server {"my-server" "http://my-internal-server"})))
+             (proxy/proxy-request {:identifier-fn :server-name
+                                   :host-fn {"my-server" "http://my-internal-server"}})))
 
 ; Handler format: Responds with 404 when request can't be forwarded
-(def app (proxy/proxy-request-by-server {"my-server" "http://my-internal-server"}))
+(def app (proxy/proxy-request {:identifer-fn :server-name
+                               :host-fn (fn [server-name] (if (.startsWith server-name "cool")
+                                                              "http://my-internal-server"
+                                                              nil))}))
 ```
+
+### Options
+
+* `identifier-fn`: Maps the request to an identifier that will be be used by `host-fn`
+* `host-fn`: Maps the result of `identifier-fn` (or the request if none provided) to the host that will receive the request. If a falsy value is returned, the request will not be forwarded.
 
 The proxy middleware is responsible for forwarding requests to another server. If the request
 cannot be forwarded, the request can either receive a default response or continue the request
 through the delegation chain.
-
-Currently, the following proxy functions are supported:
-
-* `proxy-request-by-server`: Proxies the request based on the server name
 
 ## License
 

@@ -1,6 +1,6 @@
 (ns ring-request-proxy.core-spec
   (:require [speclj.core :refer :all]
-            [ring-request-proxy.core :refer [proxy-request-by-server]]
+            [ring-request-proxy.core :refer [proxy-request]]
             [clj-http.fake :refer [with-fake-routes-in-isolation]]))
 
 (def hello-request
@@ -8,21 +8,25 @@
                                   {:status 200 :body "{}"})}})
 
 (context "ring-request-proxy.core"
-  (describe "proxy-request-by-server"
+  (describe "proxy-request"
     (context "when forwarding server is not found"
-      (with proxy-with-handler-fn (proxy-request-by-server (constantly {:status 200}) {}))
-      (with proxy-fn (proxy-request-by-server {}))
+      (with proxy-with-handler-fn (proxy-request (constantly {:status 200})
+                                                 {:identifier-fn :server-name
+                                                  :host-fn {}}))
+      (with proxy-fn (proxy-request {:identifier-fn :server-name
+                                     :host-fn {}}))
 
       (it "is not found when no optional handler supplied"
         (should= 404
-          (:status (@proxy-fn {:server-name "here" :request-method :get}))))
+                 (:status (@proxy-fn {:server-name "here" :request-method :get}))))
 
       (it "responds with the optional handler when present"
         (should= 200
-          (:status (@proxy-with-handler-fn {:server-name "here" :request-method :get})))))
+                 (:status (@proxy-with-handler-fn {:server-name "here" :request-method :get})))))
 
     (context "when forwarding server is found"
-      (with proxy-fn (proxy-request-by-server {"hello" "http://hello.com"}))
+      (with proxy-fn (proxy-request {:identifier-fn :server-name
+                                     :host-fn {"hello" "http://hello.com"}}))
       (with response
         (with-fake-routes-in-isolation hello-request
           (@proxy-fn {:server-name "hello"
