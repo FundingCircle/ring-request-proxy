@@ -4,7 +4,7 @@ A Clojure library for proxying requests in ring applications.
 
 ## Installation
 
-TBD
+[ring-request-proxy "0.1.0"]
 
 ## Usage
 

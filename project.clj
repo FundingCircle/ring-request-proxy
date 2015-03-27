@@ -1,4 +1,4 @@
-(defproject ring-request-proxy "0.1.0-SNAPSHOT"
+(defproject ring-request-proxy "0.1.0"
   :description "Ring request proxy"
   :url "https://github.com/FundingCircle/ring-request-proxy"
   :license {:name "BSD 3-clause"
