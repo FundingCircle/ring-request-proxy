@@ -7,6 +7,12 @@
   {"hello.com/gatekeeper" {:get (fn [req]
                                   {:status 200 :body "{}"})}})
 
+(def post-request
+  {"hello.com/postit" {:post (fn [req]
+                               (if (get-in req [:headers "content-length"])
+                                 (throw (Exception. "content-length header already present"))
+                                 {:status 201 :body (slurp (:body req))}))}})
+
 (context "ring-request-proxy.core"
   (describe "proxy-request"
     (context "when forwarding server is not found"
@@ -38,6 +44,24 @@
 
       (it "forwards the response body as an input stream"
         (should= "{}"
-                 (slurp (:body @response)))))))
+                 (slurp (:body @response)))))
+
+
+    (context "when forwarding server is found"
+      (with proxy-fn (proxy-request (fn [handler]
+                                      (fn [request]
+                                        (handler request))) {:identifier-fn :server-name
+                                     :host-fn       {"hello" "http://hello.com"}}))
+      (with response
+            (with-fake-routes-in-isolation post-request
+                                           (@proxy-fn {:server-name    "hello"
+                                                       :request-method :post
+                                                       :uri            "/postit"
+                                                       :headers {"content-length" (count "some post body")}
+                                                       :body "some post body"})))
+      (it "does not throw content-length already present exception"
+        (let [_ @response]
+          (should-not-throw (Exception.)))))))
+
 
 (run-specs)

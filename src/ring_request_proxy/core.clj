@@ -16,15 +16,16 @@
         server-mapping (get opts :host-fn {})]
     (fn [request]
       (let [request-key (identifier-fn request)
-            host (server-mapping request-key)]
+            host (server-mapping request-key)
+            stripped-headers (dissoc (:headers request) "content-length")]
         (if host
-          (select-keys (client/request {:url (build-url host (:uri request))
-                                        :method (:request-method request)
-                                        :body (:body request)
-                                        :headers (:headers request)
-                                        :query-params (:query-params request)
+          (select-keys (client/request {:url              (build-url host (:uri request))
+                                        :method           (:request-method request)
+                                        :body             (:body request)
+                                        :headers          stripped-headers
+                                        :query-params     (:query-params request)
                                         :throw-exceptions false
-                                        :as :stream})
+                                        :as               :stream})
                        [:status :body])
           (handler request))))))
 
