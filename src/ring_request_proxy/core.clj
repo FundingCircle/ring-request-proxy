@@ -26,7 +26,7 @@
                                         :query-params     (:query-params request)
                                         :throw-exceptions false
                                         :as               :stream})
-                       [:status :body])
+                       [:status :headers :body])
           (handler request))))))
 
 (defn proxy-request
