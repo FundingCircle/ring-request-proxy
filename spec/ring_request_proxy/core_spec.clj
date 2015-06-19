@@ -5,7 +5,9 @@
 
 (def hello-request
   {"hello.com/gatekeeper" {:get (fn [req]
-                                  {:status 200 :body "{}"})}})
+                                  {:status 200
+                                   :headers {:content-type "application/json"}
+                                   :body "{}"})}})
 
 (def post-request
   {"hello.com/postit" {:post (fn [req]
@@ -44,8 +46,11 @@
 
       (it "forwards the response body as an input stream"
         (should= "{}"
-                 (slurp (:body @response)))))
+                 (slurp (:body @response))))
 
+      (it "forwards the response header"
+        (should= {:content-type "application/json"}
+                (:headers @response))))
 
     (context "when forwarding server is found"
       (with proxy-fn (proxy-request (fn [handler]
