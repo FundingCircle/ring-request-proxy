@@ -24,6 +24,7 @@
                                         :body             (:body request)
                                         :headers          stripped-headers
                                         :query-params     (:query-params request)
+                                        :form-params      (:form-params request)
                                         :throw-exceptions false
                                         :as               :stream})
                        [:status :headers :body])
