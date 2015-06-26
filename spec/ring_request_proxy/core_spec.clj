@@ -9,6 +9,12 @@
                                    :headers {:content-type "application/json"}
                                    :body "{}"})}})
 
+(def with-query-string-request
+  {"hello.com/test?foo=bar&aaron=tall" {:get (fn [req]
+                               {:status 200
+                                :headers {:content-type "application/json"}
+                                :body "query-string-response"})}})
+
 (def post-request
   {"hello.com/postit" {:post (fn [req]
                                (if (get-in req [:headers "content-length"])
@@ -32,7 +38,7 @@
         (should= 200
                  (:status (@proxy-with-handler-fn {:server-name "here" :request-method :get})))))
 
-    (context "when forwarding server is found"
+    (context "GET request when forwarding server is found"
       (with proxy-fn (proxy-request {:identifier-fn :server-name
                                      :host-fn {"hello" "http://hello.com"}}))
       (with response
@@ -52,10 +58,24 @@
         (should= {:content-type "application/json"}
                 (:headers @response))))
 
-    (context "when forwarding server is found"
+    (context "GET request with query string"
+      (with proxy-fn (proxy-request {:identifier-fn :server-name
+                                     :host-fn {"hello" "http://hello.com"}}))
+      (with response
+        (with-fake-routes-in-isolation with-query-string-request
+                                       (@proxy-fn {:server-name "hello"
+                                                   :request-method :get
+                                                   :query-string "foo=bar&aaron=tall"
+                                                   :uri "/test"})))
+      (it "builds the query string into the URL"
+          (should= "query-string-response"
+                   (slurp (:body @response)))))
+
+    (context "POST when forwarding server is found"
       (with proxy-fn (proxy-request (fn [handler]
                                       (fn [request]
-                                        (handler request))) {:identifier-fn :server-name
+                                        (handler request)))
+                                    {:identifier-fn :server-name
                                      :host-fn       {"hello" "http://hello.com"}}))
       (with response
             (with-fake-routes-in-isolation post-request
