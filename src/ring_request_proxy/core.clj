@@ -22,13 +22,16 @@
             host (server-mapping request-key)
             stripped-headers (dissoc (:headers request) "content-length")]
         (if host
-          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request))
-                                        :method           (:request-method request)
-                                        :body             (:body request)
-                                        :headers          stripped-headers
-                                        :throw-exceptions false
-                                        :as               :stream})
-                       [:status :headers :body])
+          (select-keys
+           (client/request {:url              (build-url
+                                               host (:uri request)
+                                               (:query-string request))
+                            :method           (:request-method request)
+                            :body             (:body request)
+                            :headers          stripped-headers
+                            :throw-exceptions false
+                            :as               :stream})
+           [:status :headers :cookies :body])
           (handler request))))))
 
 (defn proxy-request
