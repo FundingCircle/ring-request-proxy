@@ -16,7 +16,8 @@
 
 (defn- create-proxy-fn [handler opts]
   (let [identifier-fn (get opts :identifier-fn identity)
-        server-mapping (get opts :host-fn {})]
+        server-mapping (get opts :host-fn {})
+        insecure (get opts :allow-insecure-ssl false)]
     (fn [request]
       (let [request-key (identifier-fn request)
             host (server-mapping request-key)
@@ -27,7 +28,8 @@
                                         :body             (:body request)
                                         :headers          stripped-headers
                                         :throw-exceptions false
-                                        :as               :stream})
+                                        :as               :stream
+                                        :insecure?        insecure})
                        [:status :headers :body])
           (handler request))))))
 
