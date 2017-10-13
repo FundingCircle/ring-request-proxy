@@ -14,18 +14,23 @@
 (defn- handle-not-found [request]
   not-found-response)
 
+(defn- host-from-url [url]
+  (when url
+    (clojure.string/replace url #"http://" "")))
+
 (defn- create-proxy-fn [handler opts]
   (let [identifier-fn (get opts :identifier-fn identity)
         server-mapping (get opts :host-fn {})]
     (fn [request]
       (let [request-key (identifier-fn request)
             host (server-mapping request-key)
-            stripped-headers (dissoc (:headers request) "content-length")]
+            stripped-headers (dissoc (:headers request) "content-length")
+            replaced-host-headers (assoc stripped-headers "host" (host-from-url host))]
         (if host
-          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request))
+          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request)) 
                                         :method           (:request-method request)
                                         :body             (:body request)
-                                        :headers          stripped-headers
+                                        :headers          replaced-host-headers
                                         :throw-exceptions false
                                         :as               :stream})
                        [:status :headers :body])
