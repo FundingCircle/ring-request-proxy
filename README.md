@@ -4,7 +4,7 @@ A Clojure library for proxying requests in ring applications.
 
 ## Installation
 
-[ring-request-proxy "0.1.3"]
+[![Clojars Project](https://img.shields.io/clojars/v/ring-request-proxy.svg)](https://clojars.org/ring-request-proxy)
 
 ## Usage
 
