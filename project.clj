@@ -11,6 +11,14 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clj-http "1.1.2"]
                  [org.clojure/data.json "0.2.6"]]
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
   :repositories [["snapshots" {:sign-releases false
                                :url           "https://clojars.org/repo"
                                :username      [:gpg :env]
