@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/clojure:lein-2.7.1
+    working_directory: ~/ring-request-proxy
+    steps:
+      - checkout
+      - restore_cache:
+          key: ring-request-proxy-{{ checksum "project.clj" }}
+      - run: lein with-profiles default,test deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: ring-request-proxy-{{ checksum "project.clj" }}
+      - run:
+          name: Run tests
+          command: lein spec

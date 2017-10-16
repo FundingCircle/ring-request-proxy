@@ -7,6 +7,6 @@
   :profiles {:dev {:dependencies [[speclj "3.2.0"]
                                   [clj-http-fake "1.0.1"]]}}
   :test-paths ["spec"]
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [clj-http "1.1.2"]
                  [org.clojure/data.json "0.2.6"]])
