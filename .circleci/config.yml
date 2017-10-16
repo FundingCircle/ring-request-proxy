@@ -14,6 +14,11 @@ jobs:
             - ~/.m2
       - run: lein spec
       - deploy:
-          name: Deploy to Clojars
-          command: lein deploy clojars
+          name: Release version to Clojars, tag and bump snapshot version
+          command: |
+            if [ "$CIRCLE_BRANCH" == "master" ]; then
+              git config user.email noreply+ring-request-proxy@fundingcircle.com
+              git config user.name "CircleCI"
+              lein release
+            fi
     working_directory: ~/ring-request-proxy
