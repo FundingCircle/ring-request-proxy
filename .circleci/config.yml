@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: clojure:lein
+    steps:
+      - checkout
+      - restore_cache:
+          key: ring-request-proxy-{{ checksum "project.clj" }}
+      - run: lein deps
+      - save_cache:
+          key: ring-request-proxy-{{ checksum "project.clj" }}
+          paths:
+            - ~/.m2
+      - run: lein spec -f junit -f progress
+      - store_test_results:
+          path: target
+      - deploy:
+          name: Release version to Clojars, tag and bump snapshot version
+          command: |
+            if [ "$CIRCLE_BRANCH" == "master" ]; then
+              git config user.email noreply+ring-request-proxy@fundingcircle.com
+              git config user.name "CircleCI"
+              lein release
+            fi
+    working_directory: ~/ring-request-proxy
