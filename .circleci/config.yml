@@ -12,7 +12,9 @@ jobs:
           key: ring-request-proxy-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
-      - run: lein spec
+      - run: lein spec -f junit -f progress
+      - store_test_results:
+          path: target
       - deploy:
           name: Release version to Clojars, tag and bump snapshot version
           command: |

@@ -5,6 +5,7 @@
             :url "http://opensource.org/licenses/BSD-3-Clause"}
   :plugins [[speclj "3.2.0"]]
   :profiles {:dev {:dependencies [[speclj "3.2.0"]
+                                  [speclj-junit "0.0.11"]
                                   [clj-http-fake "1.0.1"]]}}
   :test-paths ["spec"]
   :dependencies [[org.clojure/clojure "1.6.0"]
