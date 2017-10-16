@@ -13,4 +13,7 @@ jobs:
           paths:
             - ~/.m2
       - run: lein spec
+      - deploy:
+          name: Deploy to Clojars
+          command: lein deploy clojars
     working_directory: ~/ring-request-proxy

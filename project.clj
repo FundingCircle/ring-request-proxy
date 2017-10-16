@@ -9,4 +9,12 @@
   :test-paths ["spec"]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clj-http "1.1.2"]
-                 [org.clojure/data.json "0.2.6"]])
+                 [org.clojure/data.json "0.2.6"]]
+  :repositories [["snapshots" {:sign-releases false
+                               :url           "https://clojars.org/repo"
+                               :username      [:gpg :env]
+                               :password      [:gpg :env]}]
+                 ["releases"  {:sign-releases false
+                               :url           "https://clojars.org/repo"
+                               :username      [:gpg :env]
+                               :password      [:gpg :env]}]])
