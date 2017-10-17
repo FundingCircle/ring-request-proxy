@@ -21,6 +21,6 @@ jobs:
             if [ "$CIRCLE_BRANCH" == "master" ]; then
               git config user.email noreply+ring-request-proxy@fundingcircle.com
               git config user.name "CircleCI"
-              lein release
+              lein do deploy, vcs tag --no-sign :prefix "v", vcs push
             fi
     working_directory: ~/ring-request-proxy
