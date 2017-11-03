@@ -27,11 +27,12 @@
             stripped-headers (dissoc (:headers request) "content-length")
             replaced-host-headers (assoc stripped-headers "host" (host-from-url host))]
         (if host
-          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request)) 
+          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request))
                                         :method           (:request-method request)
                                         :body             (:body request)
                                         :headers          replaced-host-headers
                                         :throw-exceptions false
+                                        :decompress-body  false
                                         :as               :stream})
                        [:status :headers :body])
           (handler request))))))
