@@ -3,13 +3,13 @@
   :url "https://github.com/FundingCircle/ring-request-proxy"
   :license {:name "BSD 3-clause"
             :url "http://opensource.org/licenses/BSD-3-Clause"}
-  :plugins [[speclj "3.2.0"]]
-  :profiles {:dev {:dependencies [[speclj "3.2.0"]
+  :plugins [[speclj "3.3.2"]]
+  :profiles {:dev {:dependencies [[speclj "3.3.2"]
                                   [speclj-junit "0.0.11"]
-                                  [clj-http-fake "1.0.1"]]}}
+                                  [clj-http-fake "1.0.3"]]}}
   :test-paths ["spec"]
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [clj-http "1.1.2"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [clj-http "3.7.0"]
                  [org.clojure/data.json "0.2.6"]]
   :release-tasks [["vcs" "assert-committed"]
                   ["vcs" "tag" "--no-sign"]
