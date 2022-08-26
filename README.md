@@ -20,7 +20,7 @@ A Clojure library for proxying requests in ring applications.
                                    :host-fn {"my-server" "http://my-internal-server"}})))
 
 ; Handler format: Responds with 404 when request can't be forwarded
-(def app (proxy/proxy-request {:identifer-fn :server-name
+(def app (proxy/proxy-request {:identifier-fn :server-name
                                :host-fn (fn [server-name] (if (.startsWith server-name "cool")
                                                               "http://my-internal-server"
                                                               nil))}))
